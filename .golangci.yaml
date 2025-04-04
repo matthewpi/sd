@@ -1,0 +1,77 @@
+version: "2"
+run:
+  tests: true
+output:
+  formats:
+    text:
+      path: stdout
+      print-linter-name: true
+      print-issued-lines: true
+linters:
+  enable:
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - containedctx
+    - contextcheck
+    - dupword
+    - durationcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - exhaustive
+    - forcetypeassert
+    - gocheckcompilerdirectives
+    - goconst
+    - gosec
+    - mirror
+    - misspell
+    - nilerr
+    - noctx
+    - nosprintfhostport
+    - perfsprint
+    - prealloc
+    - predeclared
+    - revive
+    - sqlclosecheck
+    - unconvert
+    - usestdlibvars
+    - whitespace
+    - wrapcheck
+  settings:
+    errcheck:
+      exclude-functions:
+        - fmt:.*
+    govet:
+      disable:
+        - unreachable
+      enable-all: true
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+    - gofumpt
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+      custom-order: true
+    gofumpt:
+      extra-rules: true
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
