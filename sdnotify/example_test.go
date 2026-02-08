@@ -17,9 +17,9 @@ import (
 )
 
 func Example_notify() {
-	// Setup a cancelable context.
-	ctx, stop := context.WithCancel(context.Background())
-	defer stop()
+	// Setup a cancellable context.
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	go func() {
 		// Set up channel on which to send signal notifications.
@@ -52,7 +52,7 @@ func Example_notify() {
 				_ = sdnotify.Ready()
 			case os.Interrupt:
 				_ = sdnotify.Stopping()
-				stop()
+				cancel()
 				return
 			}
 		}
@@ -93,7 +93,7 @@ func Example_watchdog() {
 			for {
 				select {
 				case <-ctx.Done():
-					break
+					return
 				case <-t.C:
 					if err := sdnotify.Watchdog(); err != nil {
 						slog.LogAttrs(ctx, slog.LevelError, "failed to send keep-alive to watchdog", slog.Any("err", err))
@@ -105,9 +105,9 @@ func Example_watchdog() {
 }
 
 func Example_full() {
-	// Setup a cancelable context.
-	ctx, stop := context.WithCancel(context.Background())
-	defer stop()
+	// Setup a cancellable context.
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// Get the watchdog interval (if configured).
 	i, err := sdnotify.WatchdogInterval()
@@ -125,7 +125,7 @@ func Example_full() {
 			for {
 				select {
 				case <-ctx.Done():
-					break
+					return
 				case <-t.C:
 					if err := sdnotify.Watchdog(); err != nil {
 						slog.LogAttrs(ctx, slog.LevelError, "failed to send keep-alive to watchdog", slog.Any("err", err))
@@ -166,7 +166,7 @@ func Example_full() {
 				_ = sdnotify.Ready()
 			case os.Interrupt:
 				_ = sdnotify.Stopping()
-				stop()
+				cancel()
 				return
 			}
 		}

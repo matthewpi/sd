@@ -122,10 +122,11 @@ var getMonotonicUsec = nowMonotonic
 //
 // This should be called right before the application starts reloading, once
 // reloading is complete, [Ready] must be called unless an error occurs. If an
-// error occurs during reloading, call [Error] instead of [Ready]. Do your best
-// to ensure that a failed reload doesn't break the application, it is better to
-// error after a failed reload, but keep the application running with whatever
-// config or settings that were being used before the reload was triggered.
+// error occurs during reloading, call [Error] instead of [Ready].
+//
+// Do your best to ensure that a failed reload doesn't break the application.
+// It is better to error after a failed reload, but keep the application running
+// with whatever config/settings were being used before the reload was triggered.
 func Reloading() error {
 	now, err := getMonotonicUsec()
 	if err != nil {
@@ -187,11 +188,11 @@ func ErrorBytes(msg []byte, errno int) error {
 	return sdnotify(b.Bytes())
 }
 
-// formatErrorMessage performs an efficient in-place replacemenet of new-lines
+// formatErrorMessage performs an efficient in-place replacement of new-lines
 // with spaces instead of using [bytes.ReplaceAll] or [strings.ReplaceAll].
 //
-// This is used to avoid sending messages with new-lines to the sd_notify socket,
-// which would not be interpreted correctly.
+// This is used to avoid sending messages with new-lines to the `sd_notify`
+// socket, which would not be interpreted correctly.
 func formatErrorMessage(v []byte) []byte {
 	for i, c := range v {
 		if c == '\n' {

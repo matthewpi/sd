@@ -22,14 +22,14 @@ type Listener struct {
 	// You can use [FileDescriptorName=] property in [systemd.socket(5)] units
 	// associated with this application to set this value. Keep in mind that the
 	// name will apply to all listeners defined within the same [systemd.socket(5)]
-	// unit. In order to have separate names for listeners, you need to use
-	// multiple separate [systemd.socket(5)] units with the [systemd.service(5)]
-	// the application is being ran by.
+	// unit. In order to have separate names for listeners, you must use multiple
+	// separate [systemd.socket(5)] units with the [systemd.service(5)] the
+	// application is being run by.
 	//
 	// NOTE: Name is not guaranteed to be unique. With newer versions of systemd
 	// it will default to the name of the `.socket` unit the listener came from.
 	// If systemd does not provide us a name, Name will be set to `LISTEN_FD_${FD}`,
-	// where `FD` is the listeners file descriptor number.
+	// where `${FD}` is the listeners file descriptor number.
 	//
 	// [systemd.service(5)]: https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
 	// [systemd.socket(5)]: https://www.freedesktop.org/software/systemd/man/latest/systemd.socket.html
@@ -37,7 +37,7 @@ type Listener struct {
 	Name string
 }
 
-// Listeners opens [Listener]s on the file descriptors provided by [Files].
+// Listeners opens [Listener] on the file descriptors provided by [Files].
 func Listeners() ([]Listener, error) {
 	files := Files(true)
 	listeners := make([]Listener, 0, len(files))
@@ -59,7 +59,7 @@ func Listeners() ([]Listener, error) {
 }
 
 // TLSListeners is the same as [Listeners] except that it will wrap all TCP
-// [net.Listener]s using [tls.NewListener] and the provided [*tls.Config].
+// [net.Listener] using [tls.NewListener] and the provided [*tls.Config].
 //
 // If the provided [*tls.Config] is nil, the result of [Listeners] will be
 // returned as-is without being modified.
@@ -94,14 +94,14 @@ type PacketConn struct {
 	// You can use [FileDescriptorName=] property in [systemd.socket(5)] units
 	// associated with this application to set this value. Keep in mind that the
 	// name will apply to all listeners defined within the same [systemd.socket(5)]
-	// unit. In order to have separate names for listeners, you need to use
-	// multiple separate [systemd.socket(5)] units with the [systemd.service(5)]
-	// the application is being ran by.
+	// unit. In order to have separate names for listeners, you must use multiple
+	// separate [systemd.socket(5)] units with the [systemd.service(5)] the
+	// application is being run by.
 	//
 	// NOTE: Name is not guaranteed to be unique. With newer versions of systemd
 	// it will default to the name of the `.socket` unit the listener came from.
 	// If systemd does not provide us a name, Name will be set to `LISTEN_FD_${FD}`,
-	// where `FD` is the listeners file descriptor number.
+	// where `${FD}` is the listeners file descriptor number.
 	//
 	// [systemd.service(5)]: https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
 	// [systemd.socket(5)]: https://www.freedesktop.org/software/systemd/man/latest/systemd.socket.html
@@ -109,7 +109,7 @@ type PacketConn struct {
 	Name string
 }
 
-// PacketConns opens [PacketConn]s on the file descriptors provided by [Files].
+// PacketConns opens [PacketConn] on the file descriptors provided by [Files].
 func PacketConns() ([]PacketConn, error) {
 	files := Files(true)
 	conns := make([]PacketConn, 0, len(files))
