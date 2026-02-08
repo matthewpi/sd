@@ -18,11 +18,7 @@ import (
 )
 
 func TestSdnotify(t *testing.T) {
-	// For go1.23 and below.
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	// TODO: if we ever bump to go1.24 minimum.
-	// ctx := t.Context()
+	ctx := t.Context()
 
 	// Override `getMonotonicUsec` to return a static value to make testing easier.
 	getMonotonicUsec = func() (time.Time, error) { return time.UnixMicro(4162392170), nil }
