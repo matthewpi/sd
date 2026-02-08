@@ -21,7 +21,7 @@ func TestSdnotify(t *testing.T) {
 	ctx := t.Context()
 
 	// Override `getMonotonicUsec` to return a static value to make testing easier.
-	getMonotonicUsec = func() (time.Time, error) { return time.UnixMicro(4162392170), nil }
+	getMonotonicUsec = func() int64 { return 4162392170 }
 
 	// Clear the socket path just to be safe.
 	socketPath = ""

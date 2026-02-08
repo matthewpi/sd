@@ -11,6 +11,8 @@ import (
 	"net"
 	"os"
 	"strconv"
+
+	"github.com/matthewpi/sd/internal/monotime"
 )
 
 const (
@@ -112,7 +114,9 @@ func Ready() error {
 
 // getMonotonicUsec holds a function that returns the current monotonic time,
 // used to override the implementation during tests.
-var getMonotonicUsec = nowMonotonic
+var getMonotonicUsec = func() int64 {
+	return monotime.Now() / 1e3
+}
 
 // Reloading notifies `sd_notify` that the application is reloading.
 //
@@ -128,17 +132,13 @@ var getMonotonicUsec = nowMonotonic
 // It is better to error after a failed reload, but keep the application running
 // with whatever config/settings were being used before the reload was triggered.
 func Reloading() error {
-	now, err := getMonotonicUsec()
-	if err != nil {
-		return fmt.Errorf("unable to get current monotonic time: %w", err)
-	}
-	usec := now.UnixMicro()
+	now := getMonotonicUsec()
 
 	var b bytes.Buffer
 	b.WriteString(reloadingMessage)
 	b.WriteByte('\n')
 	b.WriteString(monotonicUsecPrefix)
-	b.WriteString(strconv.FormatInt(usec, 10))
+	b.WriteString(strconv.FormatInt(now, 10))
 	return sdnotify(b.Bytes())
 }
 
