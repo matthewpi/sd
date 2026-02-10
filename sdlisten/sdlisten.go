@@ -43,7 +43,7 @@ func Files(unsetEnvironment ...bool) []*os.File {
 
 	// Get the number of file descriptors we need to open.
 	nfds, err := strconv.Atoi(os.Getenv("LISTEN_FDS"))
-	if err != nil || nfds == 0 {
+	if err != nil || nfds < 1 {
 		return nil
 	}
 
@@ -53,7 +53,7 @@ func Files(unsetEnvironment ...bool) []*os.File {
 	// Open all the file descriptors.
 	files := make([]*os.File, nfds)
 	for i := range nfds {
-		// Get the file descriptor ID, we need to account for listenFdsStart here.
+		// Get the file descriptor ID, we need to account for [listenFdsStart] here.
 		fd := i + listenFdsStart
 
 		// Ensure the file descriptors are not passed to any child processes the
