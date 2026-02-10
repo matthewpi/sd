@@ -13,10 +13,10 @@ import (
 // [time.Now] during init and using [time.Since] with the previously fetched
 // [time.Now] value as an alternative to [nanotime]. It "worked", but only if
 // you want to measure elapsed time monotonically. If you need an actual
-// monotonic clock value from the system, you need to use either [nanotime] or
-// the SYS_CLOCK_GETTIME syscall with the CLOCK_MONOTONIC parameter.
+// monotonic clock value from the system, you need to use either [nanotime]
+// or the SYS_CLOCK_GETTIME syscall with the CLOCK_MONOTONIC parameter.
 //
-// We preferred using [nanotime] in this case as it is internally optimized by
+// I preferred using [nanotime] in this case as it is internally optimized by
 // Go and can take advantage of vDSOs on supported systems instead of always
 // being a syscall.
 

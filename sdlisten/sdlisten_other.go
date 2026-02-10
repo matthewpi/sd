@@ -7,7 +7,4 @@ package sdlisten
 
 import "os"
 
-// Files is a NO-OP on platforms other than `linux`.
-func Files(unsetEnvironment ...bool) []*os.File {
-	return nil
-}
+func Files(unsetEnvironment ...bool) []*os.File { return nil }

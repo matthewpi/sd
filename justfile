@@ -1,6 +1,6 @@
-export CGO_ENABLED := "0"
+export CGO_ENABLED := '0'
 pkg := 'github.com/matthewpi/sd'
-goflags := "-v -trimpath"
+goflags := '-v -trimpath'
 
 build:
     @echo 'Building...'
