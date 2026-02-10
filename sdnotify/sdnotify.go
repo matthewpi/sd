@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/matthewpi/sd/internal/monotime"
@@ -51,13 +52,17 @@ const (
 	monotonicUsecPrefix = "MONOTONIC_USEC="
 )
 
-// socketPath is the path to the `sd_notify` socket. By default it will be set
-// to the value of `os.Getenv("NOTIFY_SOCKET")`, but may be unset if necessary.
-var socketPath = os.Getenv("NOTIFY_SOCKET")
+// socketAddr is the address (path) to the `sd_notify` socket. By default it
+// will be set to the value of [getSocketAddr], but may be manually unset or
+// overridden if needed.
+var socketAddr = getSocketAddr()
 
-// socketAddr returns the [*net.UnixAddr] for the `sd_notify` socket.
-func socketAddr() *net.UnixAddr {
-	if socketPath == "" {
+// getSocketAddr gets a [*net.UnixAddr] using the value of `os.Getenv("NOTIFY_SOCKET")`.
+//
+// If the environment variable is unset or invalid, a nil value will be returned.
+func getSocketAddr() *net.UnixAddr {
+	socketPath := os.Getenv("NOTIFY_SOCKET")
+	if socketPath == "" || !filepath.IsAbs(socketPath) {
 		return nil
 	}
 	return &net.UnixAddr{
@@ -68,11 +73,10 @@ func socketAddr() *net.UnixAddr {
 
 // openSocket opens the `sd_notify` socket.
 func openSocket() (*net.UnixConn, error) {
-	addr := socketAddr()
-	if addr == nil {
+	if socketAddr == nil {
 		return nil, nil
 	}
-	c, err := net.DialUnix(addr.Net, nil, addr)
+	c, err := net.DialUnix(socketAddr.Net, nil, socketAddr)
 	if err != nil {
 		return nil, fmt.Errorf("sdnotify: unable to open NOTIFY_SOCKET: %w", err)
 	}
@@ -125,20 +129,18 @@ var getMonotonicUsec = func() int64 {
 // `Type=notify`.
 //
 // This should be called right before the application starts reloading, once
-// reloading is complete, [Ready] must be called unless an error occurs. If an
-// error occurs during reloading, call [Error] instead of [Ready].
+// reloading is complete, [Ready] must be called. If an error occurs during
+// reloading, call [Error] instead of [Ready].
 //
 // Do your best to ensure that a failed reload doesn't break the application.
 // It is better to error after a failed reload, but keep the application running
 // with whatever config/settings were being used before the reload was triggered.
 func Reloading() error {
-	now := getMonotonicUsec()
-
 	var b bytes.Buffer
 	b.WriteString(reloadingMessage)
 	b.WriteByte('\n')
 	b.WriteString(monotonicUsecPrefix)
-	b.WriteString(strconv.FormatInt(now, 10))
+	b.WriteString(strconv.FormatInt(getMonotonicUsec(), 10))
 	return sdnotify(b.Bytes())
 }
 

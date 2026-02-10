@@ -23,13 +23,10 @@ func TestSdnotify(t *testing.T) {
 	// Override `getMonotonicUsec` to return a static value to make testing easier.
 	getMonotonicUsec = func() int64 { return 4162392170 }
 
-	// Clear the socket path just to be safe.
-	socketPath = ""
-
-	// Check that the address is as expected.
-	if socketAddr() != nil {
-		t.Errorf("expected socket address to be nil if `socketPath` is empty.")
-	}
+	// Ensure socketAddr is nil, since it will only be populated if the
+	// NOTIFY_SOCKET environment variable is set. This prevents an impure
+	// environment from affecting the tests.
+	socketAddr = nil
 
 	// Create a new temporary path for us to setup a socket on.
 	tmpDir, err := os.MkdirTemp(os.TempDir(), "nexavo")
@@ -37,25 +34,31 @@ func TestSdnotify(t *testing.T) {
 		t.Fatal(fmt.Errorf("failed to create temporary directory: %w", err))
 		return
 	}
-	socketPath = filepath.Join(tmpDir, "notify.sock")
-	defer func() {
-		_ = os.Remove(socketPath)
-		_ = os.Remove(tmpDir)
-	}()
+	defer os.Remove(tmpDir)
+
+	socketPath := filepath.Join(tmpDir, "notify.sock")
+	os.Setenv("NOTIFY_SOCKET", socketPath)
+
+	// Get the socketAddr now that the environment variable is set.
+	socketAddr = getSocketAddr()
+	if socketAddr == nil {
+		t.Errorf("socketAddr is still unset")
+		return
+	}
+	defer os.Remove(socketAddr.Name)
 
 	// Check that the address is as expected.
-	addr := socketAddr()
-	if expected, got := "unixgram", addr.Net; expected != got {
+	if expected, got := "unixgram", socketAddr.Net; expected != got {
 		t.Errorf("expected socket network to be \"%s\", but got \"%s\"", expected, got)
 		return
 	}
-	if expected, got := socketPath, addr.Name; expected != got {
+	if expected, got := socketPath, socketAddr.Name; expected != got {
 		t.Errorf("expected socket name to be \"%s\", but got \"%s\"", expected, got)
 		return
 	}
 
 	// Start listening on the address.
-	socket, err := net.ListenUnixgram(addr.Net, addr)
+	socket, err := net.ListenUnixgram(socketAddr.Net, socketAddr)
 	if err != nil {
 		t.Fatal(fmt.Errorf("failed to start listening: %w", err))
 		return
