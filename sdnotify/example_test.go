@@ -50,7 +50,7 @@ func Example_notify() {
 
 				// No error, notify systemd that the reload was successful.
 				_ = sdnotify.Ready()
-			case os.Interrupt:
+			case os.Interrupt, syscall.SIGTERM, syscall.SIGABRT:
 				_ = sdnotify.Stopping()
 				cancel()
 				return
@@ -64,6 +64,9 @@ func Example_notify() {
 	// of it blocks for an extended period of time, a common mistake is starting
 	// a HTTP server on the main thread using [http.ListenAndServe] without
 	// placing it in a go-routine.
+
+	// Once your application is finished starting, notify systemd that is it ready.
+	_ = sdnotify.Ready()
 
 	// Wait until the context is canceled, via a Interrupt signal.
 	<-ctx.Done()
@@ -80,7 +83,7 @@ func Example_watchdog() {
 	// Get the watchdog interval (if configured).
 	i, err := sdnotify.WatchdogInterval()
 	if err != nil {
-		slog.LogAttrs(ctx, slog.LevelError, "failed to get watchdog interval from systemd", slog.Any("err", err))
+		slog.LogAttrs(ctx, slog.LevelError, "failed to get systemd watchdog interval", slog.Any("err", err))
 		os.Exit(1)
 		return
 	}
@@ -96,7 +99,7 @@ func Example_watchdog() {
 					return
 				case <-t.C:
 					if err := sdnotify.Watchdog(); err != nil {
-						slog.LogAttrs(ctx, slog.LevelError, "failed to send keep-alive to watchdog", slog.Any("err", err))
+						slog.LogAttrs(ctx, slog.LevelError, "failed to send keep-alive to systemd watchdog", slog.Any("err", err))
 					}
 				}
 			}
@@ -112,7 +115,7 @@ func Example_full() {
 	// Get the watchdog interval (if configured).
 	i, err := sdnotify.WatchdogInterval()
 	if err != nil {
-		slog.LogAttrs(ctx, slog.LevelError, "failed to get watchdog interval from systemd", slog.Any("err", err))
+		slog.LogAttrs(ctx, slog.LevelError, "systemd watchdog interval", slog.Any("err", err))
 		os.Exit(1)
 		return
 	}
@@ -128,7 +131,7 @@ func Example_full() {
 					return
 				case <-t.C:
 					if err := sdnotify.Watchdog(); err != nil {
-						slog.LogAttrs(ctx, slog.LevelError, "failed to send keep-alive to watchdog", slog.Any("err", err))
+						slog.LogAttrs(ctx, slog.LevelError, "failed to send keep-alive to systemd watchdog", slog.Any("err", err))
 					}
 				}
 			}
@@ -164,7 +167,7 @@ func Example_full() {
 
 				// No error, notify systemd that the reload was successful.
 				_ = sdnotify.Ready()
-			case os.Interrupt:
+			case os.Interrupt, syscall.SIGTERM, syscall.SIGABRT:
 				_ = sdnotify.Stopping()
 				cancel()
 				return
@@ -178,6 +181,9 @@ func Example_full() {
 	// of it blocks for an extended period of time, a common mistake is starting
 	// a HTTP server on the main thread using [http.ListenAndServe] without
 	// placing it in a go-routine.
+
+	// Once your application is finished starting, notify systemd that is it ready.
+	_ = sdnotify.Ready()
 
 	// Wait until the context is canceled, via a Interrupt signal.
 	<-ctx.Done()

@@ -21,7 +21,7 @@ func Example() {
 	// Get all the listeners passed to us by systemd.
 	listeners, err := sdlisten.Listeners()
 	if err != nil {
-		slog.LogAttrs(ctx, slog.LevelError, "failed to get listeners from systemd", slog.Any("err", err))
+		slog.LogAttrs(ctx, slog.LevelError, "failed to get systemd listeners", slog.Any("err", err))
 		os.Exit(1)
 		return
 	}
