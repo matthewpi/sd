@@ -13,6 +13,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strconv"
 	"testing"
 	"time"
 )
@@ -100,7 +101,7 @@ func TestSdnotify(t *testing.T) {
 		{
 			name:   "Reloading",
 			fn:     Reloading,
-			expect: []byte(reloadingMessage + "\n" + monotonicUsecPrefix + "4162392170"),
+			expect: []byte(reloadingMessage + "\n" + monotonicUsecPrefix + strconv.FormatInt(getMonotonicUsec(), 10)),
 		},
 		{
 			name:   "STOPPING",

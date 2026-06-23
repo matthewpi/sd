@@ -14,7 +14,7 @@ Go package that provides functions to integrate with systemd features.
 
 - systemd notify - `sd_notify` (`Type=notify` and `Type=notify-reload`)
   - Allows applications to notify systemd about its status, useful for ensuring systemd knows when a service is actually started or indicating status details.
-  - Support for watchdogs to ensure applications are still alive, similar to a Kubernetes readiness probe.
+  - Support for watchdogs to ensure applications are still alive, similar to a Kubernetes liveness probe.
 - systemd sockets
   - Allows applications to bind to privileged ports without privileges.
   - Support for socket-activation to allow applications to be started automatically when an incoming connection comes in.

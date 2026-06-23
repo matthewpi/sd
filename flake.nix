@@ -25,7 +25,7 @@
 
       # Per-system attributes.
       #
-      # This generates `name`.${system} attrsets in a convinent way.
+      # This generates `name`.${system} attribute sets in a convenient way.
       perSystem = {
         pkgs,
         system,

@@ -30,6 +30,7 @@ func Example_notify() {
 		// Passing no signal argument to [signal.Notify] causes
 		// all signals to be sent to the channel.
 		signal.Notify(c)
+		defer signal.Stop(c)
 
 		for s := range c {
 			switch s {
@@ -141,6 +142,7 @@ func Example_full() {
 		// Passing no signal argument to [signal.Notify] causes
 		// all signals to be sent to the channel.
 		signal.Notify(c)
+		defer signal.Stop(c)
 
 		for s := range c {
 			switch s {
