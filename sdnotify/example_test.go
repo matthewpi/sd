@@ -84,10 +84,7 @@ func Example_watchdog() {
 	i, err := sdnotify.WatchdogInterval()
 	if err != nil {
 		slog.LogAttrs(ctx, slog.LevelError, "failed to get systemd watchdog interval", slog.Any("err", err))
-		os.Exit(1)
-		return
-	}
-	if i > 0 {
+	} else if i > 0 {
 		// Send keep-alives to systemd in the background.
 		go func(ctx context.Context, i time.Duration) {
 			t := time.NewTicker(i)
@@ -116,10 +113,7 @@ func Example_full() {
 	i, err := sdnotify.WatchdogInterval()
 	if err != nil {
 		slog.LogAttrs(ctx, slog.LevelError, "systemd watchdog interval", slog.Any("err", err))
-		os.Exit(1)
-		return
-	}
-	if i > 0 {
+	} else if i > 0 {
 		// Send keep-alives to systemd in the background.
 		go func(ctx context.Context, i time.Duration) {
 			t := time.NewTicker(i)

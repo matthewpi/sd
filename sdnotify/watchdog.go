@@ -75,11 +75,11 @@ func WatchdogInterval() (time.Duration, error) {
 	usec, err := strconv.ParseInt(wdUsec, 10, 64)
 	if err != nil {
 		err = fmt.Errorf("sdnotify: unable to convert WATCHDOG_USEC to an integer: %w", err)
-		return 0, nil
+		return 0, err
 	}
 	if usec < 1 {
 		err = errors.New("sdnotify: WATCHDOG_USEC must be a positive integer")
-		return 0, nil
+		return 0, err
 	}
 	// Convert the usec integer to a [time.Duration].
 	d := time.Duration(usec) * time.Microsecond
@@ -92,7 +92,7 @@ func WatchdogInterval() (time.Duration, error) {
 	pid, err := strconv.Atoi(wdPid)
 	if err != nil {
 		err = fmt.Errorf("sdnotify: unable to convert WATCHDOG_PID to an integer: %w", err)
-		return 0, nil
+		return 0, err
 	}
 	if pid != os.Getpid() {
 		return 0, nil
